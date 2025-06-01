@@ -1,10 +1,13 @@
 ﻿using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq.Expressions;
 
 namespace BulkyWeb.Areas.Admin.Controllers
 {
+    [Area("Admin")]
+
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -20,6 +23,14 @@ namespace BulkyWeb.Areas.Admin.Controllers
         }
         public IActionResult Create()
         {
+            //Projections in EF core 
+            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
+            {
+                Text = u.Name,
+                Value = u.Id.ToString()
+            });
+            //view bag implementation
+            ViewBag.CategoryList = CategoryList;
             return View();
         }
         [HttpPost]
