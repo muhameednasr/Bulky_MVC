@@ -21,7 +21,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
 
         public IActionResult Index()
         {
-            List<Product> objProductList = _unitOfWork.Product.GetAll().ToList();
+            List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties:"Category").ToList();
             return View(objProductList);
         }
         public IActionResult Upsert(int? id)
@@ -69,14 +69,34 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 {
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     string productPath = Path.Combine(wwwRootPath, @"Images\Product");
+                    //Handling Image on Update
+                    if (!string.IsNullOrEmpty(productVM.Product.ImageURL)) 
+                    {
+                        //delete old image
+                        var oldImagePath = 
+                            Path.Combine(wwwRootPath,productVM.Product.ImageURL.TrimStart('\\'));
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
                     using(var fileStream = new FileStream(Path.Combine(productPath, fileName), FileMode.Create))
                     {
                         file.CopyTo(fileStream);
                     }
                     productVM.Product.ImageURL = @"\Images\Product\" + fileName;
                 }
-                _unitOfWork.Product.Add(productVM.Product);
-                _unitOfWork.Save();
+
+                if (productVM.Product.Id == 0)
+                {
+                    _unitOfWork.Product.Add(productVM.Product);
+                }
+                else
+                {
+                    _unitOfWork.Product.Update(productVM.Product);
+                }
+
+                   _unitOfWork.Save();
                 TempData["success"] = "Product has been Created SUCCESSFULLY";
                 return RedirectToAction("Index");
             }

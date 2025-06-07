@@ -11,7 +11,6 @@
     <div class="card-body p-4">
         <div class="row pb-2">
             <div class="col-6">
-              
             </div>
             <div class="col-6 text-end">
                 <a asp-controller="Product" asp-action="Upsert" class="btn btn-primary">
@@ -45,9 +44,9 @@
                             @obj.Author
                         </td>
                         <td>
-                            @obj.Category
+                            @obj.Category.Name
                         </td>
-                      
+
                         <td>
                             <div class="w-75 btn-group text-end" role="group">
                                 <a asp-controller="Product" asp-action="Upsert" asp-route-id="@obj.Id" class="btn btn-primary mx-2">
