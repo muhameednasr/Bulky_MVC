@@ -65,7 +65,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 string wwwRootPath = _webHostEnvironment.WebRootPath;
-                if (wwwRootPath != null)
+                if (file != null)
                 {
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     string productPath = Path.Combine(wwwRootPath, @"Images\Product");
@@ -135,7 +135,8 @@ namespace BulkyWeb.Areas.Admin.Controllers
             }
             return View();
         }*/
-        public IActionResult Delete(int? id)
+
+        /*public IActionResult Delete(int? id)
         {
             if (id == null || id == 0)
             {
@@ -162,6 +163,39 @@ namespace BulkyWeb.Areas.Admin.Controllers
             TempData["success"] = "Product has been Deleted SUCCESSFULLY!!";
             return RedirectToAction("Index");
 
+        }*/
+
+        #region API CALLS
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            List<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
+            return Json(new { data = objProductList });
         }
+
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+            var ProductToBeDeleted = _unitOfWork.Product.Get(u=> u.Id == id);
+            if (ProductToBeDeleted == null)
+            {
+                return Json(new { succes = false, message = "Error while deleting" });
+            }
+
+            if (!string.IsNullOrEmpty(ProductToBeDeleted.ImageURL))
+            {
+                var oldImagePath = Path.Combine(_webHostEnvironment.WebRootPath,
+                                                ProductToBeDeleted.ImageURL.TrimStart('\\'));
+
+                if (System.IO.File.Exists(oldImagePath))
+                {
+                    System.IO.File.Delete(oldImagePath);
+                }
+            }
+            _unitOfWork.Product.Remove(ProductToBeDeleted);
+            _unitOfWork.Save();
+            return Json(new { succes = true, message = " Deleted Successfully!!" });
+        }
+        #endregion
     }
 }
