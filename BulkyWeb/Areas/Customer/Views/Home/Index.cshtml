@@ -6,8 +6,8 @@
         <div class="col-lg-3 col-sm-6">
             <div class="row p-2">
                 <div class="col-12 p-1">
-                    <div class="card border-0 p-3 shadow border-top border-5 rounded">
-                        <img src="@product.ImageURL" class="card-img-top rounded" />
+                    <div class="card border-0 p-3 shadow border-top justify-content-center border-5 rounded" style="height:500px">
+                        <img src="@product.ImageURL" class="card-img-top rounded" style="width:250px;height:250px" />
                         <div class="card-body pb-0">
                             <div class="pl-1">
                                 <p class="card-title h5 text-dark opacity-75 text-uppercase tex text-center">@product.Title</p>
@@ -22,7 +22,7 @@
                                 </p>
                             </div>
                             <div class="pl-1">
-                                <p class=" text-dark text-opacity-75  text-center">
+                                <p class=" text-dark text-opacity-75  text-center" style="margin-bottom:0px">
                                     As low as:
                                     <span>
                                         @product.Price100.ToString("c")
